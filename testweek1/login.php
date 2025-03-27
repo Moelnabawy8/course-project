@@ -9,7 +9,7 @@ if (!empty($_SESSION['user'])) {
 $users = [
     (object)[
         'id' => 1,
-        'name' => 'Elnabawy',
+        'name' => 'Mohamed Elnabawy',
         "gender" => 'm',
         'image' => '1.jpg',
         'email' => 'moelnabawy904@gmail.com',
