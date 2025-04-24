@@ -34,6 +34,8 @@ class Cart extends config implements operations
 
         return $this;
     }
+
+    
     public function create()
     {
         // Implementation for creating a user
