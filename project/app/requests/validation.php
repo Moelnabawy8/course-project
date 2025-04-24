@@ -1,52 +1,45 @@
 <?php
-include_once __DIR__ . '/../database/config.php';
-class validation
+// استدعاء ملف الاتصال بقاعدة البيانات
+include_once __DIR__ . "/../database/config.php";
+
+class Validation
 {
-    private $name;
-    private $value;
+    private $name;   // اسم الحقل (مثلاً: email, phone)
+    private $value;  // القيمة المُدخلة من المستخدم
+
+    // كونستراكتور بياخد اسم الحقل والقيمة الخاصة به
     public function __construct($name, $value)
     {
         $this->name = $name;
         $this->value = $value;
     }
 
-    
-    public function required()
-    {
+    // التحقق إن الحقل مش فاضي
+    public function required() {
         if (empty($this->value)) {
-            return $this->name . " is required";
-        } else {
-            return "";
+            return "{$this->name} is required";
         }
+        return "";
     }
 
-    public function regx($regx)
+    // التحقق من صحة القيمة باستخدام Regular Expression
+    public function regex($regex): string
     {
-        if (!preg_match($regx, $this->value)) {
-            return $this->name . " is invalid";
-        } else {
-            return "";
-        }
+        return preg_match($regex, $this->value) ? "" : "$this->name is not valid";
     }
 
-    public function unique($table)
+    // التحقق من إن القيمة مش موجودة بالفعل في قاعدة البيانات (فريدة)
+    public function unique($table): string
     {
-        // check if the email is unique in the database
-        // if not return error message
-        // else return empty string
-        $query = "SELECT * FROM $table WHERE $this->name = '$this->value'";
-        $config = new config();
+        $query = "SELECT * FROM `$table` WHERE `$this->name` = '$this->value'";
+        $config = new Config(); // إنشاء اتصال بقاعدة البيانات
         $result = $config->runDQL($query);
-        return (empty($result)) ? "" : $this->name . " already exists in the database";
+        return empty($result) ? "" : "$this->name already exists in the database";
     }
 
-
-    public function confirmed($valueconfirmed)
+    // التحقق من تأكيد القيمة (زي تأكيد الباسورد)
+    public function confirmed($inputValueConfirmed): string
     {
-        if ($this->value != $valueconfirmed) {
-            return $this->name . " does not match";
-        } else {
-            return "";
-        }
+        return $this->value != $inputValueConfirmed ? "$this->name does not match" : "";
     }
 }

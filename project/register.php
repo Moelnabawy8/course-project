@@ -4,47 +4,36 @@ $title = "Register";
 include_once "layouts/header.php";
 include_once "layouts/nav.php";
 include_once "layouts/breadcrumb.php";
-if ($_POST) {
 
+if ($_POST) {
+    // Email Validation
     $emailValidation = new validation("email", $_POST['email']);
     $emailRequiredResult = $emailValidation->required();
-    if (empty($emailRequiredResult)) {
-        $emailReqexResult = $emailValidation->regx("/^[\w\.-]+@[\w\.-]+\.[a-zA-Z]{2,6}$/");
-        if (empty($emailReqexResult)) {
-            $emailUniqueResult = $emailValidation->unique("users");
-            if (empty($emailUniqueResult)) {
-                //no validation errors
-            }
-        }
-    }
+    $emailRegexResult = $emailValidation->regex("/^[\w\.-]+@[\w\.-]+\.[a-zA-Z]{2,6}$/");
+    $emailUniqueResult = $emailValidation->unique("users");
+
+    // Phone Validation
     $phoneValidation = new validation("phone", $_POST['phone']);
     $phoneRequiredResult = $phoneValidation->required();
-    if (empty($phoneRequiredResult)) {
-        $phoneReqexResult = $phoneValidation->regx('/^(01[0-9]{1}[0-9]{8})$/');
-        if (empty($phoneReqexResult)) {
-            $phoneUniqueResult = $phoneValidation->unique("users");
-            if (empty($phoneUniqueResult)) {
-                //no validation errors
-            }
-        }
-    }
+    $phoneReqexResult = $phoneValidation->regex('/^(01[0-9]{1}[0-9]{8})$/');
+    $phoneUniqueResult = $phoneValidation->unique("users");
+
+    // Password Validation
     $passwordValidation = new validation("password", $_POST['password']);
     $passwordRequiredResult = $passwordValidation->required();
-    if (empty($passwordRequiredResult)) {
-        $passwordReqexResult = $passwordValidation->regx('/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/');
-        if (empty($passwordReqexResult)) {
-            $passwordUniqueResult = $passwordValidation->confirmed($_POST['password_confirmation']);
-            if (empty($passwordUniqueResult)) {
-                if (isset($_POST['password_confirmation']) && $_POST['password'] === $_POST['password_confirmation']) {
-                    // Password and confirmation match, no validation errors
-                } else {
-                    $passwordUniqueResult = "Password confirmation does not match or is missing.";
-                }
-            }
-        }
+    $passwordReqexResult = $passwordValidation->regex('/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/');
+    $passwordConfirmationResult = $passwordValidation->confirmed($_POST['password_confirmation']);
+
+    // Success check (لو كله تمام)
+    if (
+        empty($emailRequiredResult) && empty($emailRegexResult) && empty($emailUniqueResult) &&
+        empty($phoneRequiredResult) && empty($phoneRegexResult) && empty($phoneUniqueResult) &&
+        empty($passwordRequiredResult) && empty($passwordRegexResult) && empty($passwordConfirmationResult)
+    ) {
+        echo "<div class='alert alert-success text-center'>All inputs are valid, proceed to insert into DB</div>";
+        // مكان إدخال البيانات لقاعدة البيانات
     }
 }
-
 ?>
 <div class="login-register-area ptb-100">
     <div class="container">
@@ -66,38 +55,32 @@ if ($_POST) {
                                         <input type="text" name="last_name" placeholder="Last Name" value="<?php if (isset($_POST['last_name'])) echo $_POST['last_name']; ?>">
                                         <input type="email" name="email" placeholder="Email" value="<?php if (isset($_POST['email'])) echo $_POST['email']; ?>">
                                         <?php
-                                        if (isset($emailRequiredResult) && !empty($emailRequiredResult)) {
-                                            echo "<div class='alert alert-danger'>$emailRequiredResult</div>";
-                                        }
-                                        if (isset($emailReqexResult) && !empty($emailReqexResult)) {
-                                            echo "<div class='alert alert-danger'>$emailReqexResult</div>";
-                                        }
-                                        if (isset($emailUniqueResult) && !empty($emailUniqueResult)) {
-                                            echo "<div class='alert alert-danger'>$emailUniqueResult</div>";
-                                        }
+                                       if (!empty($emailRequiredResult)) {
+                                        echo "<div class='alert alert-danger'>$emailRequiredResult</div>";
+                                    } elseif (!empty($emailRegexResult)) {
+                                        echo "<div class='alert alert-danger'>$emailRegexResult</div>";
+                                    } elseif (!empty($emailUniqueResult)) {
+                                        echo "<div class='alert alert-danger'>$emailUniqueResult</div>";
+                                    }
                                         ?>
                                         <input type="text" name="phone" placeholder="Phone" value="<?php if (isset($_POST['phone'])) echo $_POST['phone']; ?>">
                                         <?php
-                                        if (isset($phoneRequiredResult) && !empty($phoneRequiredResult)) {
+                                        if (!empty($phoneRequiredResult)) {
                                             echo "<div class='alert alert-danger'>$phoneRequiredResult</div>";
-                                        }
-                                        if (isset($phoneReqexResult) && !empty($phoneReqexResult)) {
-                                            echo "<div class='alert alert-danger'>$phoneReqexResult</div>";
-                                        }
-                                        if (isset($phoneUniqueResult) && !empty($phoneUniqueResult)) {
+                                        } elseif (!empty($phoneRegexResult)) {
+                                            echo "<div class='alert alert-danger'>$phoneRegexResult</div>";
+                                        } elseif (!empty($phoneUniqueResult)) {
                                             echo "<div class='alert alert-danger'>$phoneUniqueResult</div>";
                                         }
                                         ?>
                                         <input type="password" name="password" placeholder="Password" value="<?php if (isset($_POST['password'])) echo $_POST['password']; ?>">
                                         <?php
-                                        if (isset($passwordRequiredResult) && !empty($passwordRequiredResult)) {
+                                        if (!empty($passwordRequiredResult)) {
                                             echo "<div class='alert alert-danger'>$passwordRequiredResult</div>";
-                                        }
-                                        if (isset($passwordReqexResult) && !empty($passwordReqexResult)) {
-                                            echo "<div class='alert alert-danger'>$passwordReqexResult</div>";
-                                        }
-                                        if (isset($passwordUniqueResult) && !empty($passwordUniqueResult)) {
-                                            echo "<div class='alert alert-danger'>$passwordUniqueResult</div>";
+                                        } elseif (!empty($passwordRegexResult)) {
+                                            echo "<div class='alert alert-danger'>$passwordRegexResult</div>";
+                                        } elseif (!empty($passwordConfirmationResult)) {
+                                            echo "<div class='alert alert-danger'>$passwordConfirmationResult</div>";
                                         }
                                         ?>
                                         <input type="password" name="password_confirmation" placeholder="Password Confirmation" value="<?php if (isset($_POST['password_confirmation'])) echo $_POST['password_confirmation']; ?>">

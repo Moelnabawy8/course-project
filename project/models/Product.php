@@ -1,7 +1,7 @@
 <?php
 include_once __DIR__ . '/../database/config.php';
 include_once __DIR__ . '/../database/operations.php';
-class User extends config implements operations {
+class Product extends config implements operations {
  
     public function create() {
         // Implementation for creating a user
