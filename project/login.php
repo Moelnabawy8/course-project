@@ -1,8 +1,28 @@
 <?php
+session_start();
 $title = "Login";
+
 include_once "layouts/header.php";
 include_once "layouts/nav.php";
 include_once "layouts/breadcrumb.php";
+if ($_POST) {
+    # code...
+    $errors= [];
+    if (empty($_POST['user-name'])) {
+        $errors['user-name'] = "User name is required";
+    } else { if (empty($_POST['user-password'])) {
+        $errors['user-password'] = "Password is required";   
+    } 
+    }if (empty($errors)) {
+        # code...
+        $_POST['user-name']= $_SESSION['email'];
+        $_POST['user-password']= $_SESSION['password'];
+        header("Location: profile.php");
+        exit();
+
+    }
+   
+}
 ?>
 <div class="login-register-area ptb-100">
     <div class="container">

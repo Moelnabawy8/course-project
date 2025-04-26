@@ -1,3 +1,6 @@
+<?php 
+ob_start();
+?>
 <!doctype html>
 <html class="no-js" lang="zxx">
     

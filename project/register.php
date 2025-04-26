@@ -1,10 +1,12 @@
 <?php
-include_once "app/requests/validation.php";
+session_start();
 $title = "Register";
 include_once "layouts/header.php";
 include_once "layouts/nav.php";
 include_once "layouts/breadcrumb.php";
-
+include_once "app/requests/validation.php";
+include_once  'app/models/User.php';
+include_once "app/services/mail.php";
 if ($_POST) {
     // Email Validation
     $emailValidation = new validation("email", $_POST['email']);
@@ -15,13 +17,13 @@ if ($_POST) {
     // Phone Validation
     $phoneValidation = new validation("phone", $_POST['phone']);
     $phoneRequiredResult = $phoneValidation->required();
-    $phoneReqexResult = $phoneValidation->regex('/^(01[0-9]{1}[0-9]{8})$/');
+    $phoneRegexResult = $phoneValidation->regex('/^(01[0-9]{1}[0-9]{8})$/');
     $phoneUniqueResult = $phoneValidation->unique("users");
 
     // Password Validation
     $passwordValidation = new validation("password", $_POST['password']);
     $passwordRequiredResult = $passwordValidation->required();
-    $passwordReqexResult = $passwordValidation->regex('/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/');
+    $passwordRegexResult = $passwordValidation->regex('/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/');
     $passwordConfirmationResult = $passwordValidation->confirmed($_POST['password_confirmation']);
 
     // Success check (لو كله تمام)
@@ -30,10 +32,43 @@ if ($_POST) {
         empty($phoneRequiredResult) && empty($phoneRegexResult) && empty($phoneUniqueResult) &&
         empty($passwordRequiredResult) && empty($passwordRegexResult) && empty($passwordConfirmationResult)
     ) {
-        echo "<div class='alert alert-success text-center'>All inputs are valid, proceed to insert into DB</div>";
+
         // مكان إدخال البيانات لقاعدة البيانات
+        $user = new User;
+        $user->setfirst_name($_POST['first_name'])
+     ->setlast_name($_POST["last_name"])
+     ->setemail($_POST["email"])
+     ->setphone($_POST["phone"])
+     ->setpassword($_POST["password"])
+     ->setgender($_POST["gender"]);
+        $code = rand(100000, 999999);
+        $user->setcode($code);
+       $result= $user->create();
+     
+$_SESSION['code'] = $code;
+        $_SESSION['email'] = $_POST['email'];
+        // Send verification code to email
+        $mail = new Mail($_POST["email"], "Welcome to our website", "<h1>Welcome to our website</h1><p>Your verification code is: $code</p>");
+        $mailresult = $mail->send();
+        if ($mailresult) {
+            # code...
+            header("Location: check-code.php");
+            
+        }
+        exit();
     }
+    //     $user = new Mail($_POST["email"], "Welcome to our website", "<h1>Welcome to our website</h1><p>Your verification code is: $code</p>");
+    //    $mailresult= $user->send();
+    //     // Redirect to login page
+    //     if ($mailresult) {
+    //         # code...
+    //         header("Location: login.php");
+    //     }
+        
+    //     exit();
+    // }
 }
+
 ?>
 <div class="login-register-area ptb-100">
     <div class="container">
@@ -55,13 +90,13 @@ if ($_POST) {
                                         <input type="text" name="last_name" placeholder="Last Name" value="<?php if (isset($_POST['last_name'])) echo $_POST['last_name']; ?>">
                                         <input type="email" name="email" placeholder="Email" value="<?php if (isset($_POST['email'])) echo $_POST['email']; ?>">
                                         <?php
-                                       if (!empty($emailRequiredResult)) {
-                                        echo "<div class='alert alert-danger'>$emailRequiredResult</div>";
-                                    } elseif (!empty($emailRegexResult)) {
-                                        echo "<div class='alert alert-danger'>$emailRegexResult</div>";
-                                    } elseif (!empty($emailUniqueResult)) {
-                                        echo "<div class='alert alert-danger'>$emailUniqueResult</div>";
-                                    }
+                                        if (!empty($emailRequiredResult)) {
+                                            echo "<div class='alert alert-danger'>$emailRequiredResult</div>";
+                                        } elseif (!empty($emailRegexResult)) {
+                                            echo "<div class='alert alert-danger'>$emailRegexResult</div>";
+                                        } elseif (!empty($emailUniqueResult)) {
+                                            echo "<div class='alert alert-danger'>$emailUniqueResult</div>";
+                                        }
                                         ?>
                                         <input type="text" name="phone" placeholder="Phone" value="<?php if (isset($_POST['phone'])) echo $_POST['phone']; ?>">
                                         <?php
@@ -115,5 +150,6 @@ if ($_POST) {
 </div>
 
 <?php
-include_once "layouts/footer.php"
+include_once "layouts/footer.php";
+
 ?>

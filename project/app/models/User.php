@@ -1,5 +1,5 @@
 <?php
-include_once __DIR__ . '/../database/config.php';
+include_once __DIR__.'/../database/config.php';
 include_once __DIR__ . '/../database/operations.php';
 
 class User extends config implements operations
@@ -83,7 +83,7 @@ class User extends config implements operations
 
     public function setPassword($password)
     {
-        $this->password = $password;
+        $this->password = sha1($password) ;
 
         return $this;
     }
@@ -202,6 +202,9 @@ class User extends config implements operations
     public function create()
     {
         // Implementation for creating a user
+        $query = "INSERT INTO users (first_name, last_name, email,phone, password,gender, code)
+         VALUES ('$this->first_name', '$this->last_name', '$this->email','$this->phone', '$this->password','$this->gender', $this->code)";
+        return $this->runDML($query);
     }
 
     public function read()
@@ -212,10 +215,27 @@ class User extends config implements operations
     public function update()
     {
         // Implementation for updating a user
+       
     }
 
     public function delete()
     {
         // Implementation for deleting a user
+    }
+    public function checkCode($code)
+    {
+        $query = "SELECT * FROM users WHERE email = '$this->email' AND code = $code";
+        $result = $this->runDQL($query);
+        if (count($result) > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+public function makeUserVerified()
+    {
+        $query = "UPDATE `users` SET email_verified_at = '$this->email_verified_at',status = $this->status
+        WHERE email = '$this->email' ";
+        return $this->runDML($query);
     }
 }
