@@ -238,4 +238,13 @@ public function makeUserVerified()
         WHERE email = '$this->email' ";
         return $this->runDML($query);
     }
+    public function login(){
+        $query = "SELECT * FROM users WHERE email = '$this->email' AND password = '$this->password'";
+        $result = $this->runDQL($query);
+        if (count($result) > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

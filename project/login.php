@@ -5,23 +5,9 @@ $title = "Login";
 include_once "layouts/header.php";
 include_once "layouts/nav.php";
 include_once "layouts/breadcrumb.php";
-if ($_POST) {
-    # code...
-    $errors= [];
-    if (empty($_POST['user-name'])) {
-        $errors['user-name'] = "User name is required";
-    } else { if (empty($_POST['user-password'])) {
-        $errors['user-password'] = "Password is required";   
-    } 
-    }if (empty($errors)) {
-        # code...
-        $_POST['user-name']= $_SESSION['email'];
-        $_POST['user-password']= $_SESSION['password'];
-        header("Location: profile.php");
-        exit();
-
-    }
-   
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $_SESSION['email'] = $_POST['email'] ?? '';
+    $_SESSION['password'] = $_POST['password'] ?? '';
 }
 ?>
 <div class="login-register-area ptb-100">
@@ -39,16 +25,32 @@ if ($_POST) {
                         <div id="lg1" class="tab-pane active">
                             <div class="login-form-container">
                                 <div class="login-register-form">
-                                    <form action="#" method="post">
-                                        <input type="text" name="user-name" placeholder="Username">
-                                        <input type="password" name="user-password" placeholder="Password">
+                                    <form action="app/post/login.php" method="post">
+                                    <input type="email" name="email" placeholder="email" value="<?= $_SESSION['old']['email'] ?? '' ?>">
+
+                                        <?php  if (isset($_SESSION['errors']['email']['required']) && !empty($_SESSION['errors']['email']['required'])) {
+                                            echo '<div class="alert alert-danger" role="alert">' . $_SESSION['errors']['email']['regex'] . '</div>';
+                                        }
+
+                                        if (isset($_SESSION['errors']['email']['regex']) && !empty($_SESSION['errors']['email']['regex'])) {
+                                            echo '<div class="alert alert-danger" role="alert">' . $_SESSION['errors']['email']['regex'] . '</div>';
+                                        } ?>
+                                        <input type="password" name="password" placeholder="Password">
+                                        <?php if (isset($_SESSION['errors']['password']['Required']) && !empty($_SESSION['errors']['password']['Required'])) {
+                                            echo '<div class="alert alert-danger" role="alert">' . $_SESSION['errors']['password']['Required'] . '</div>';
+                                        }
+
+                                        if (isset($_SESSION['errors']['password']['regex']) && !empty($_SESSION['errors']['password']['regex'])) {
+                                            echo '<div class="alert alert-danger" role="alert">' . $_SESSION['errors']['password']['regex'] . '</div>';
+                                        } ?>
+
                                         <div class="button-box">
                                             <div class="login-toggle-btn">
                                                 <input type="checkbox">
                                                 <label>Remember me</label>
                                                 <a href="#">Forgot Password?</a>
                                             </div>
-                                            <button type="submit"><span>Login</span></button>
+                                            <button type="submit" name="login"><span>login</span></button>
                                         </div>
                                     </form>
                                 </div>
@@ -62,5 +64,8 @@ if ($_POST) {
     </div>
 </div>
 <?php
+unset($_SESSION['errors']);
+unset($_SESSION['old']);
+
 include_once "layouts/footer.php"
 ?>
