@@ -1,4 +1,5 @@
 <?php
+session_start();
 $title='home';
 include_once "layouts/header.php";
 include_once "layouts/nav.php"

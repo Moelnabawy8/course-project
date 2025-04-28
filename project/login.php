@@ -3,6 +3,7 @@ session_start();
 $title = "Login";
 
 include_once "layouts/header.php";
+include_once "app/middleware/guest.php";
 include_once "layouts/nav.php";
 include_once "layouts/breadcrumb.php";
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -26,23 +27,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <div class="login-form-container">
                                 <div class="login-register-form">
                                     <form action="app/post/login.php" method="post">
-                                    <input type="email" name="email" placeholder="email" value="<?= $_SESSION['old']['email'] ?? '' ?>">
+                                        <input type="email" name="email" placeholder="email" value="<?= $_SESSION['old']['email'] ?? '' ?>">
 
-                                        <?php  if (isset($_SESSION['errors']['email']['required']) && !empty($_SESSION['errors']['email']['required'])) {
-                                            echo '<div class="alert alert-danger" role="alert">' . $_SESSION['errors']['email']['regex'] . '</div>';
+                                        <?php
+                                        if (!empty($_SESSION['errors']['email'])) {
+                                            foreach ($_SESSION['errors']['email'] as $key => $value) {
+                                                echo "<div class='alert alert-danger'>$value</div>";
+                                            }
                                         }
-
-                                        if (isset($_SESSION['errors']['email']['regex']) && !empty($_SESSION['errors']['email']['regex'])) {
-                                            echo '<div class="alert alert-danger" role="alert">' . $_SESSION['errors']['email']['regex'] . '</div>';
-                                        } ?>
+                                        ?>
                                         <input type="password" name="password" placeholder="Password">
-                                        <?php if (isset($_SESSION['errors']['password']['Required']) && !empty($_SESSION['errors']['password']['Required'])) {
-                                            echo '<div class="alert alert-danger" role="alert">' . $_SESSION['errors']['password']['Required'] . '</div>';
+                                        <?php
+                                        if (!empty($_SESSION['errors']['password'])) {
+                                            foreach ($_SESSION['errors']['password'] as $key => $value) {
+                                                echo "<div class='alert alert-danger'>$value</div>";
+                                            }
                                         }
-
-                                        if (isset($_SESSION['errors']['password']['regex']) && !empty($_SESSION['errors']['password']['regex'])) {
-                                            echo '<div class="alert alert-danger" role="alert">' . $_SESSION['errors']['password']['regex'] . '</div>';
-                                        } ?>
+                                        ?>
 
                                         <div class="button-box">
                                             <div class="login-toggle-btn">
@@ -64,8 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </div>
 </div>
 <?php
-unset($_SESSION['errors']);
-unset($_SESSION['old']);
+
 
 include_once "layouts/footer.php"
 ?>

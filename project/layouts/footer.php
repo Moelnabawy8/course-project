@@ -195,5 +195,7 @@
 
 </html>
 <?php 
+unset($_SESSION['errors']);
+unset($_SESSION['old']);
 ob_end_flush();
 ?>

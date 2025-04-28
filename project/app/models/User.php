@@ -222,15 +222,10 @@ class User extends config implements operations
     {
         // Implementation for deleting a user
     }
-    public function checkCode($code)
+    public function checkCode()
     {
-        $query = "SELECT * FROM users WHERE email = '$this->email' AND code = $code";
-        $result = $this->runDQL($query);
-        if (count($result) > 0) {
-            return true;
-        } else {
-            return false;
-        }
+        $query = "SELECT * FROM `users` WHERE email = '$this->email' AND code = $this->code";
+        return $this->runDQL($query);
     }
 public function makeUserVerified()
     {
@@ -238,13 +233,9 @@ public function makeUserVerified()
         WHERE email = '$this->email' ";
         return $this->runDML($query);
     }
-    public function login(){
+    public function login()
+    {
         $query = "SELECT * FROM users WHERE email = '$this->email' AND password = '$this->password'";
-        $result = $this->runDQL($query);
-        if (count($result) > 0) {
-            return true;
-        } else {
-            return false;
-        }
+        return $this->runDQL($query);
     }
 }

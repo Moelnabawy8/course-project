@@ -2,6 +2,7 @@
 session_start();
 $title = "Register";
 include_once "layouts/header.php";
+include_once "app/middleware/guest.php";
 include_once "layouts/nav.php";
 include_once "layouts/breadcrumb.php";
 include_once "app/requests/validation.php";
@@ -57,16 +58,7 @@ $_SESSION['code'] = $code;
         }
         exit();
     }
-    //     $user = new Mail($_POST["email"], "Welcome to our website", "<h1>Welcome to our website</h1><p>Your verification code is: $code</p>");
-    //    $mailresult= $user->send();
-    //     // Redirect to login page
-    //     if ($mailresult) {
-    //         # code...
-    //         header("Location: login.php");
-    //     }
-        
-    //     exit();
-    // }
+    
 }
 
 ?>

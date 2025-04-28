@@ -1,3 +1,4 @@
+
 <!-- header start -->
 <header class="header-area gray-bg clearfix">
             <div class="header-bottom">
@@ -110,16 +111,31 @@
                                         </ul>
                                     </nav>
                                 </div>
-								<div class="header-currency">
-									<span class="digit">welcome <i class="ti-angle-down"></i></span>
-									<div class="dollar-submenu">
-										<ul>
-											<li><a href="login.php">Login</a></li>
-											<li><a href="register.php">Register</a></li>
-											
-										</ul>
-									</div>
-								</div>
+								  <div class="header-currency">
+                                <?php
+                                if (isset($_SESSION['user'])) {
+                                ?>
+                                    <span class="digit"><?= $_SESSION['user']->first_name . ' ' .  $_SESSION['user']->last_name  ?> <i class="ti-angle-down"></i></span>
+                                    <div class="dollar-submenu">
+                                        <ul>
+                                            <li><a href="profile.php">Profile</a></li>
+                                            <li><a href="app/post/logout.php">Logout</a></li>
+                                        </ul>
+                                    </div>
+                                <?php
+                                } else {
+                                ?>
+                                    <span class="digit">WELCOME <i class="ti-angle-down"></i></span>
+                                    <div class="dollar-submenu">
+                                        <ul>
+                                            <li><a href="login.php">Login</a></li>
+                                            <li><a href="register.php">Register</a></li>
+                                        </ul>
+                                    </div>
+                                <?php
+                                }
+                                ?>
+                            </div>
                                 <div class="header-cart">
                                     <a href="#">
                                         <div class="cart-icon">

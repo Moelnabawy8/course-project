@@ -1,8 +1,10 @@
 <?php
 session_start();
+
 $title = "profile";
 
 include_once "layouts/header.php";
+include_once "app/middleware/auth.php";
 include_once "layouts/nav.php";
 include_once "layouts/breadcrumb.php";
 ?>
@@ -24,14 +26,15 @@ include_once "layouts/breadcrumb.php";
                                 <div class="login-register-form">
                                     <form action="#" method="post">
 
-                                        <input type="text" name="first-name" placeholder="First Name" value="Mohamed" readonly>
-                                        <input type="text" name="last-name" placeholder="Last Name" value="Nabawy" readonly>
-                                        <input type="email" name="email" placeholder="Email" value="nabowy@example.com" readonly>
-                                        <input type="text" name="phone" placeholder="Phone" value="01012345678" readonly>
+                                        <input type="text" name="first-name" placeholder="First Name" value="<?= $_SESSION['user']->first_name ?>" readonly>
+                                        <input type="text" name="last-name" placeholder="Last Name" value="<?= $_SESSION['user']->last_name ?>" readonly>
+                                        <input type="email" name="email" placeholder="Email" value="<?= $_SESSION['user']->email ?>" readonly>
+                                        <input type="text" name="phone" placeholder="Phone" value="<?= $_SESSION['user']->phone ?>" readonly>
 
                                         <div class="button-box">
-                                            <a href="edit-profile.php" class="btn btn-primary" style="margin-top: 10px; padding: 10px 20px; display: inline-block;">Edit Profile</a>
-                                        </div>
+                                            <div class="button-box mt-5">
+                                                <a href="edit-profile.php" class="btn btn-primary">Edit Profile</a>
+                                            </div>
 
                                     </form>
                                 </div>

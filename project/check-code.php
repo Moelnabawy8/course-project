@@ -20,19 +20,23 @@ if ($_POST) {
         }
     }
 
-    if (empty($errors)) {
-        $userobject = new User();
-        $userobject->setEmail($_SESSION['email']);  // لازم نحدد الإيميل عشان نعمل Update بعدين
-
-        if ($userobject->checkCode($_POST['code'])) {
-            $userobject->setEmail_verified_at(date("Y-m-d H:i:s"));
+    if(empty($errors)){
+        $userobject = new User;
+        $userobject->setCode($_POST['code']);
+        $userobject->setEmail($_SESSION['email']);
+        $result = $userobject->checkCode();
+        if($result){
+            // correct code
             $userobject->setStatus(1);
-            $userobject->makeUserVerified();
+            date_default_timezone_set('Africa/Cairo');
+            $userobject->setEmail_verified_at(date('Y-m-d H:i:s'));
+            // update email verified at and status
+            $updateResult = $userobject->makeUserVerified();
 
             header("Location: login.php");
             exit();
-        } else {
-            $errors['code'] = "Invalid code. Please try again.";
+        }else{
+            $errors['wrong'] = "<div class='alert alert-danger'> Wrong Code </div>";
         }
     }
 }

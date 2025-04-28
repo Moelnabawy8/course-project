@@ -1,5 +1,5 @@
 <?php
-    session_start();
+session_start();
 include_once "../models/User.php";
 include_once "../requests/Validation.php";
 if (!isset($_POST['login'])) {
@@ -45,15 +45,30 @@ if (empty($_SESSION["errors"])) {
     $result = $userobject->login();
     if ($result) {
         # code...
-        // correct credentials
-        header("location:../../profile.php");
-        die;
-    } else {
+        $user = $result->fetch_object();
+        if ($user->status == 1) {
+            $_SESSION['user'] = $user ;
+            
 
-        // incorrect credentials
-        $_SESSION['wrong-credentials'] = "Wrong credentials";
+
+            # code...
+
+            header('location:../../index.php');
+            die;
+        } elseif ($user->status == 0) {
+            # code...
+            header('location:../../check-code.php');
+            die;
+        } else {
+            # code...
+            $_SESSION["errors"]["email"]['blocked'] = "this account is blocked";
+        }
     }
-}
+} else {
+
+    // incorrect credentials
+    $_SESSION["errors"]["email"]['wrong'] = "failed attempet";}
+
 $_SESSION['old']['email'] = $_POST['email'] ?? '';
 header('location:../../login.php');
 die;

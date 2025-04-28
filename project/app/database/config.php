@@ -7,28 +7,29 @@ class Config {
     private $con;
 
     public function __construct() {
-        $this->con = new mysqli($this->hostname, $this->username, $this->password, $this->databasename);
-
-        // تأكد إن الاتصال ناجح
+        $this->con = new mysqli($this->hostname,$this->username,$this->password,$this->databasename);
         // if ($this->con->connect_error) {
         //     die("Connection failed: " . $this->con->connect_error);
-        // }
+        //   }
+        //   echo "Connected successfully";
     }
-
-    // Run DML: insert, update, delete => بيرجع true أو false
-    public function runDML(string $query): bool {
+    // insert - update -delete
+    public function runDML(string $query) : bool
+    {
         $result = $this->con->query($query);
-        return $result ? true : false;
-    }
-
-    // Run DQL: select => بيرجع array
-    public function runDQL(string $query) {
-        $result = $this->con->query($query);
-        if ($result) {
-            return $result->fetch_all(MYSQLI_ASSOC);
-        } else {
-            return [];
+        if($result){
+            return true;
         }
+        return false;
+    }
+    // selects
+    public function runDQL(string $query) 
+    {
+        $result = $this->con->query($query);
+        if($result->num_rows > 0){
+            return $result;
+        }
+        return [];
     }
 }
 ?>
