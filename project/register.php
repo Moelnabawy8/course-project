@@ -53,7 +53,7 @@ $_SESSION['code'] = $code;
         $mailresult = $mail->send();
         if ($mailresult) {
             # code...
-            header("Location: check-code.php");
+            header("Location: check-code.php?page=register");
             
         }
         exit();

@@ -1,5 +1,5 @@
 <?php
-session_start();
+
 $title = "Login";
 
 include_once "layouts/header.php";
@@ -47,9 +47,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                                         <div class="button-box">
                                             <div class="login-toggle-btn">
-                                                <input type="checkbox">
+                                                <input type="checkbox" name="remeber_me">
                                                 <label>Remember me</label>
-                                                <a href="#">Forgot Password?</a>
+                                                <a name="forget_me" href="forget-password.php">Forgot Password?</a>
                                             </div>
                                             <button type="submit" name="login"><span>login</span></button>
                                         </div>

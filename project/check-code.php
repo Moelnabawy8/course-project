@@ -1,10 +1,24 @@
 <?php
-session_start();
 $title = "Check Code";
 include_once "layouts/header.php";
 include_once "layouts/nav.php";
 include_once "layouts/breadcrumb.php";
 include_once "app/models/User.php";
+$availablePages = ['register','forget'];
+// if url has query string
+if($_GET){
+    // check if key exists
+    if(isset($_GET['page'])){
+        // check if correct value
+        if(!in_array($_GET['page'],$availablePages)){
+            header('location:layouts/errors/404.php');die;
+        }
+    }else{
+        header('location:layouts/errors/404.php');die;
+    }
+}else{
+    header('location:layouts/errors/404.php');die;
+}
 
 if ($_POST) {
     $errors = [];
@@ -32,9 +46,15 @@ if ($_POST) {
             $userobject->setEmail_verified_at(date('Y-m-d H:i:s'));
             // update email verified at and status
             $updateResult = $userobject->makeUserVerified();
-
-            header("Location: login.php");
-            exit();
+if ($_GET['page'] == "register") {
+    # code...
+    header("Location: login.php");
+    exit();
+}else {
+    # code...
+    header("Location: reset-password.php");
+}
+           
         }else{
             $errors['wrong'] = "<div class='alert alert-danger'> Wrong Code </div>";
         }

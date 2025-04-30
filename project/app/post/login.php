@@ -47,6 +47,9 @@ if (empty($_SESSION["errors"])) {
         # code...
         $user = $result->fetch_object();
         if ($user->status == 1) {
+            if (isset($_POST['remeber_me'])) {
+                setcookie("remeber_me", $_POST['email'], time() + (24*60 *60)*12*30, "/"); // 86400 = 1 month
+            }
             $_SESSION['user'] = $user ;
             
 
