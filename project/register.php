@@ -1,5 +1,5 @@
 <?php
-session_start();
+
 $title = "Register";
 include_once "layouts/header.php";
 include_once "app/middleware/guest.php";

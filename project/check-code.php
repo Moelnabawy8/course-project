@@ -1,23 +1,31 @@
 <?php
 $title = "Check Code";
 include_once "layouts/header.php";
+include_once "app/middleware/guest.php";
+if (empty($_SESSION['email'])) {
+    header('location:login.php');
+    die;
+}
 include_once "layouts/nav.php";
 include_once "layouts/breadcrumb.php";
 include_once "app/models/User.php";
-$availablePages = ['register','forget'];
+$availablePages = ['register', 'forget'];
 // if url has query string
-if($_GET){
+if ($_GET) {
     // check if key exists
-    if(isset($_GET['page'])){
+    if (isset($_GET['page'])) {
         // check if correct value
-        if(!in_array($_GET['page'],$availablePages)){
-            header('location:layouts/errors/404.php');die;
+        if (!in_array($_GET['page'], $availablePages)) {
+            header('location:layouts/errors/404.php');
+            die;
         }
-    }else{
-        header('location:layouts/errors/404.php');die;
+    } else {
+        header('location:layouts/errors/404.php');
+        die;
     }
-}else{
-    header('location:layouts/errors/404.php');die;
+} else {
+    header('location:layouts/errors/404.php');
+    die;
 }
 
 if ($_POST) {
@@ -34,28 +42,31 @@ if ($_POST) {
         }
     }
 
-    if(empty($errors)){
+    if (empty($errors)) {
         $userobject = new User;
         $userobject->setCode($_POST['code']);
         $userobject->setEmail($_SESSION['email']);
         $result = $userobject->checkCode();
-        if($result){
+        if ($result) {
             // correct code
             $userobject->setStatus(1);
             date_default_timezone_set('Africa/Cairo');
             $userobject->setEmail_verified_at(date('Y-m-d H:i:s'));
             // update email verified at and status
             $updateResult = $userobject->makeUserVerified();
-if ($_GET['page'] == "register") {
-    # code...
-    header("Location: login.php");
-    exit();
-}else {
-    # code...
-    header("Location: reset-password.php");
-}
-           
-        }else{
+            if($updateResult){
+                // header
+                if($_GET['page'] == 'register'){
+                    unset($_SESSION['email']);
+                    $page = "login.php";
+                }elseif($_GET['page']== 'forget'){
+                    $page = "reset-password.php";
+                }   
+                header("location:$page");die;
+            }else{
+                $errors['something'] = "<div class='alert alert-danger'> Something Went Wrong </div>";
+            }
+        } else {
             $errors['wrong'] = "<div class='alert alert-danger'> Wrong Code </div>";
         }
     }

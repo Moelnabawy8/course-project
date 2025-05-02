@@ -214,7 +214,10 @@ class User extends config implements operations
 
     public function update()
     {
+        
         // Implementation for updating a user
+        $query = "UPDATE users SET first_name = '$this->first_name', last_name = '$this->last_name', email = '$this->email', phone = '$this->phone";
+
        
     }
 
@@ -253,4 +256,17 @@ public function makeUserVerified()
         $query = "UPDATE users SET password = '$this->password' WHERE email = '$this->email'";
         return $this->runDML($query);
     }
+   public function updateProfile()
+{
+    $query = "UPDATE users SET first_name = '$this->first_name', last_name = '$this->last_name', phone = '$this->phone'";
+    
+    if ($this->image != null) {
+        $query .= ", image = '$this->image'";
+    }
+
+    $query .= " WHERE email = '$this->email'";
+    return $this->runDML($query);
+    
+}
+
 }

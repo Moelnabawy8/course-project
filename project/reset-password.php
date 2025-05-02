@@ -1,6 +1,10 @@
 <?php
 $title = "reset password";
 include_once "layouts/header.php";
+include_once "app/middleware/guest.php";
+if(empty($_SESSION['user-email'])){
+    header('location:login.php');die;
+}
 include_once "layouts/nav.php";
 include_once "layouts/breadcrumb.php";
 include_once "app/models/User.php";
@@ -31,8 +35,9 @@ if ($_POST) {
         $user->setPassword($_POST['password']);
         $result = $user->updatePasswordByEmail();
         if ($result) {
+            $success = "password updated successfully";
             // password updated
-            header('location:login.php');die;
+            header('Refresh:5;url=login.php');
         } else {
             // some thing wrong
             $errors["some-wrong"] = " some thing wrong";
@@ -59,6 +64,14 @@ if ($_POST) {
                             <div class="login-form-container">
                                 <div class="login-register-form">
                                     <form action="#" method="post">
+                                        <?php 
+                                        if (isset($success)) {
+                                            # code...
+                                            echo " <div class='alert alert-success'>$success</div></div>";
+
+                                        }
+                                        
+                                        ?>
 
                                         <input type="password" name="password" placeholder="password">
                                         <input type="password" name="confirm_password" placeholder="confirm password">
