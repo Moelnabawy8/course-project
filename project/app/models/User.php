@@ -266,7 +266,12 @@ public function makeUserVerified()
 
     $query .= " WHERE email = '$this->email'";
     return $this->runDML($query);
-    
-}
 
+}
+public function updatePassword()
+{
+    $query = "UPDATE users SET password = '$this->password' WHERE email = '$this->email'";
+    return $this->runDML($query);
+
+}
 }
