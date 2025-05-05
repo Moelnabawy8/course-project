@@ -210,6 +210,8 @@ class User extends config implements operations
     public function read()
     {
         // Implementation for reading a user
+        $query = "SELECT * FROM users WHERE status=1";
+        return $this->runDQL($query);
     }
 
     public function update()
