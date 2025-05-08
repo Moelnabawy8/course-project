@@ -150,6 +150,10 @@ class Subcategory extends config implements operations
     {
         // Implementation for deleting a category
     }
+    public function readSubcategoryById(){
+        $query = "SELECT * FROM subcategories WHERE status=1 and id='$this->id'";
+        return $this->runDQL($query);
+    }
 
     
 }

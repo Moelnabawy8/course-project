@@ -44,13 +44,14 @@ if ($categoriesResult) {
     foreach ($categories as $category) {
 ?>
         <li>
-            <a href="#"><?php echo $category['name_en']; ?></a>
+            <a href="shop.php"><?php echo $category['name_en']; ?></a>
             <ul>
                 <?php
                 foreach ($subcategories as $subcategory) {
                     if ($subcategory['category_id'] == $category['id']) {
                 ?>
-                        <li><a href="shop.php?subcategory_id=<?php echo $subcategory['id']; ?>"><?php echo $subcategory['name_en']; ?></a></li>
+                        <li><a href="shop.php?subcategory_id=<?php echo $subcategory['id']; ?>">
+                            <?php echo $subcategory['name_en']; ?></a></li>
                 <?php
                     }
                 }

@@ -6,15 +6,40 @@ include_once "layouts/breadcrumb.php";
 include_once "app/models/Product.php";
 include_once "app/models/Brand.php";
 include_once "app/models/Category.php";
+include_once "app/models/Subcategory.php";
 $product = new Product();
 $product->setStatus(1);
-$resultProducts = $product->read();
+if ($_GET) {
+    if (isset($_GET['subcategory_id']) && is_numeric($_GET['subcategory_id'])) {
+        $subcategory = new Subcategory();
+        $subcategory->setId($_GET['subcategory_id']);
+        $resultSubcategoriesid=$subcategory->readSubcategoryById();
+        if ($resultSubcategoriesid) {
+            $product->setSubcategory_Id($_GET['subcategory_id']);
+            $resultProducts = $product->readBySubcategory();
+        }else {
+            header("location: layouts/errors/404.php");
+        }
+        
+    }else {
+       header("location: layouts/errors/404.php");
+    }
+
+   
+    
+}else {
+    $resultProducts = $product->read();
+}
+
 $brand = new Brand();
 $brand->setStatus(1);
 $resultBrands = $brand->read();
 $category = new Category();
 $category->setStatus(1);
 $resultCategories = $category->read();
+$subcategory = new Subcategory();
+$subcategory->setStatus(1);
+$resultSubcategories = $subcategory->read();
 ?>
 
 
@@ -30,10 +55,10 @@ $resultCategories = $category->read();
                             <li class="active"><a href="#product-grid" data-view="product-grid"><i class="fa fa-th"></i></a></li>
                             <li><a href="#product-list" data-view="product-list"><i class="fa fa-list-ul"></i></a></li>
                         </ul>
-                        
+
                     </div>
                     <div class="product-sorting-wrapper">
-                        
+
                         <div class="product-show shorting-style">
                             <label>Sort by:</label>
                             <select>
@@ -56,7 +81,7 @@ $resultCategories = $category->read();
                                     <div class="product-width col-xl-4 col-lg-4 col-md-4 col-sm-6 col-12 mb-30">
                                         <div class="product-wrapper">
                                             <div class="product-img">
-                                                <a href="product-details.php">
+                                                <a href="product-details.php?id=<?php echo $product['id'] ?>">
                                                     <img alt="" src="assets/img/product/<?php echo $product['image'] ?>" />
                                                 </a>
                                                 <span>-30%</span>
@@ -76,24 +101,24 @@ $resultCategories = $category->read();
                                                 <div class="product-hover-style">
                                                     <div class="product-title">
                                                         <h4>
-                                                            <a href="product-details.php"><?php echo $product['name_en'] ?></a>
+                                                            <a href="product-details.php?id=<?php echo $product['id'] ?>"><?php echo $product['name_en'] ?></a>
                                                         </h4>
                                                     </div>
                                                     <div class="cart-hover">
-                                                        <h4><a href="product-details.php">+ Add to cart</a></h4>
+                                                        <h4><a href="product-details.php?id=<?php echo $product['id'] ?>">+ Add to cart</a></h4>
                                                     </div>
                                                 </div>
                                                 <div class="product-price-wrapper">
                                                     <span><?php echo $product['price'] ?></span>
                                                 </div>
                                             </div>
-                                            <div class="product-list-details">
+                                            <div class="product-list-details?id=<?php echo $product['id'] ?>">
                                                 <h4>
-                                                    <a href="product-details.php"><?php echo $product['name_en'] ?></a>
+                                                    <a href="product-details.php?id=<?php echo $product['id'] ?>"><?php echo $product['name_en'] ?></a>
                                                 </h4>
                                                 <div class="product-price-wrapper">
                                                     <span><?php echo $product['price'] ?></span>
-                                                   
+
                                                 </div>
                                                 <p><?php echo $product['desc_en'] ?></p>
                                                 <div class="shop-list-cart-wishlist">
@@ -111,13 +136,15 @@ $resultCategories = $category->read();
 
 
                                 }
+                            }else {
+                                echo "<div class='alert alert-warning text-center w-100' > No products yet </div>";
                             }
 
                             ?>
 
                         </div>
                     </div>
-                   
+
                 </div>
             </div>
             <div class="col-lg-3">
@@ -127,18 +154,39 @@ $resultCategories = $category->read();
                         <div class="shop-catigory">
                             <ul id="faq">
                                 <?php
-                                if ($resultCategories) {
+                                if ($resultCategories && $resultSubcategories) {
                                     $categories = $resultCategories->fetch_all(MYSQLI_ASSOC);
+                                    $subcategories = $resultSubcategories->fetch_all(MYSQLI_ASSOC);
+
                                     foreach ($categories as $key => $category) {
                                 ?>
-                                        <li> <a href="#"><?php echo $category['name_en'] ?></a></li> <?php
-                                                                            }
-                                                                        }
-
-                                                                                ?>
-
-
+                                        <li>
+                                            <a data-toggle="collapse" data-parent="#faq" href="#shop-category-<?= $key ?>">
+                                                <?= $category['name_en'] ?>
+                                                <i class="ion-ios-arrow-down"></i>
+                                            </a>
+                                            <ul id="shop-category-<?= $key ?>" class="panel-collapse collapse">
+                                                <?php
+                                                foreach ($subcategories as $subcategory) {
+                                                    if ($subcategory['category_id'] == $category['id']) {
+                                                ?>
+                                                        <li>
+                                                            <a href="shop.php?subcategory_id=<?= $subcategory['id']; ?>">
+                                                                <?= $subcategory['name_en']; ?>
+                                                            </a>
+                                                        </li>
+                                                <?php
+                                                    }
+                                                }
+                                                ?>
+                                            </ul>
+                                        </li>
+                                <?php
+                                    }
+                                }
+                                ?>
                             </ul>
+
                         </div>
                     </div>
                     <div class="shop-price-filter mt-40 shop-sidebar-border pt-35">
@@ -175,7 +223,7 @@ $resultCategories = $category->read();
                         </div>
                     </div>
 
-                    
+
                 </div>
             </div>
         </div>

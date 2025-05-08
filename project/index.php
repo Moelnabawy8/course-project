@@ -10,23 +10,7 @@ $resultProduct = $product->read();
 $products = $resultProduct ? $resultProduct->fetch_all(MYSQLI_ASSOC) : [];
 ?>
 
-<!-- Slider Start -->
-<div class="slider-area">
-    <div class="slider-active owl-dot-style owl-carousel">
-        <?php foreach ($products as $product): ?>
-            <div class="single-slider bg-img small-slider" 
-                style="background-image:url(assets/img/slider/<?php echo $product['slider'] ?>);">
-                <div class="container h-100 d-flex align-items-center">
-                    <div class="slider-content slider-animated-1">
-                        <h1 class="animated"><?php echo $product['desc_en'] ?> <span class="theme-color"><?php echo $product['name_en'] ?></span></h1>
-                        <p><?php echo $product['desc_en'] ?></p>
-                    </div>
-                </div>
-            </div>
-        <?php endforeach; ?>
-    </div>
-</div>
-<!-- Slider End -->
+
 
 <!-- Product Area Start -->
 <div class="product-area bg-image-1 pt-100 pb-95">

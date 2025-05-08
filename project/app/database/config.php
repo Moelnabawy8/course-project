@@ -26,6 +26,9 @@ class Config {
     public function runDQL(string $query) 
     {
         $result = $this->con->query($query);
+        if (!$result) {
+            die("SQL Error: " . $this->con->error);
+        }
         if($result->num_rows > 0){
             return $result;
         }

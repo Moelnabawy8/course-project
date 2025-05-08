@@ -19,16 +19,15 @@ class Mail {
         $mail = new PHPMailer(true);
 
         try {
-            //Server settings
-            $mail->SMTPDebug = SMTP::DEBUG_SERVER;                      //Enable verbose debug output
-            $mail->isSMTP();                                            //Send using SMTP
-            $mail->Host       = 'smtp.gmail.com';                       //Set the SMTP server to send through
-            $mail->SMTPAuth   =  true;                                   //Enable SMTP authentication
-            $mail->Username   = 'moelnabawy8@gmail.com';                //SMTP username
-            $mail->Password   = 'atzj ivqf goxe fipz
-';                         //SMTP password
-            $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;            //Enable implicit TLS encryption
-            $mail->Port       = 465;                                    //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
+            // Server settings
+            $mail->SMTPDebug = 0; // Production: use 0, for testing: use SMTP::DEBUG_SERVER
+            $mail->isSMTP();
+            $mail->Host       = 'smtp.gmail.com';
+            $mail->SMTPAuth   = true;
+            $mail->Username   = 'moelnabawy8@gmail.com';
+            $mail->Password   = 'atzj ivqf goxe fipz'; // ❗ يفضل حفظه في ملف config خارجي
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+            $mail->Port       = 465;
 
             // Email content
             $mail->setFrom('moelnabawy8@gmail.com', 'project');
@@ -40,8 +39,7 @@ class Mail {
             $mail->send();
             return true;
         } catch (Exception $e) {
-            // ممكن تطبع الخطأ أثناء التطوير:
-            // echo "Mailer Error: {$mail->ErrorInfo}";
+            echo "Mailer Error: {$mail->ErrorInfo}";
             return false;
         }
     }

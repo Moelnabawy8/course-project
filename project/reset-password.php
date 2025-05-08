@@ -2,7 +2,7 @@
 $title = "reset password";
 include_once "layouts/header.php";
 include_once "app/middleware/guest.php";
-if(empty($_SESSION['user-email'])){
+if(empty($_SESSION['email'])){
     header('location:login.php');die;
 }
 include_once "layouts/nav.php";

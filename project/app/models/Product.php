@@ -322,4 +322,12 @@ class Product extends config implements operations
     {
         // Implementation for deleting a user
     }
+    public function readBySubcategory(){
+        $query = "SELECT id,name_en,price,desc_en,image FROM products WHERE status=1 and subcategory_id='$this->subcategory_id'";
+        return $this->runDQL($query);
+    }
+    public function readProductById(){
+        $query = "SELECT * FROM `products_details` WHERE `id`='$this->id'";
+        return $this->runDQL($query);
+    }
 }
