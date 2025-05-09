@@ -10,12 +10,12 @@ include_once "app/models/Subcategory.php";
 $product = new Product();
 $product->setStatus(1);
 if ($_GET) {
-    if (isset($_GET['subcategory_id']) && is_numeric($_GET['subcategory_id'])) {
+    if (isset($_GET['id']) && is_numeric($_GET['id'])) {
         $subcategory = new Subcategory();
-        $subcategory->setId($_GET['subcategory_id']);
+        $subcategory->setId($_GET['id']);
         $resultSubcategoriesid=$subcategory->readSubcategoryById();
         if ($resultSubcategoriesid) {
-            $product->setSubcategory_Id($_GET['subcategory_id']);
+            $product->setSubcategory_Id($_GET['id']);
             $resultProducts = $product->readBySubcategory();
         }else {
             header("location: layouts/errors/404.php");
@@ -171,7 +171,7 @@ $resultSubcategories = $subcategory->read();
                                                     if ($subcategory['category_id'] == $category['id']) {
                                                 ?>
                                                         <li>
-                                                            <a href="shop.php?subcategory_id=<?= $subcategory['id']; ?>">
+                                                            <a href="shop.php?id=<?= $subcategory['id']; ?>">
                                                                 <?= $subcategory['name_en']; ?>
                                                             </a>
                                                         </li>

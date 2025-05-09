@@ -6,6 +6,11 @@ include_once "layouts/breadcrumb.php";
 include_once "app/models/Product.php";
 include_once "app/models/User.php";
 include_once "app/models/Review.php";
+include_once "app/models/Spec.php";
+$spec=new Spec();
+$spec->setId($_GET['id']);
+$resultSpec=$spec->getSpecs();
+
 $review = new Review();
 $review->setProduct_id($_GET['id']);
 $resultReview = $review->read();
@@ -90,6 +95,15 @@ if ($_GET) {
                     <div class="pro-dec-feature">
                         <!-- specs -->
                         <ul>
+                            <?php
+                           
+                           if ($resultSpec) {
+                            $speces = $resultSpec->fetch_all(MYSQLI_ASSOC);
+                            foreach ($speces as $spec) {
+                                echo "<li><span>{$spec['spec_en']}</span></li>";
+                            }
+                        }
+                            ?>
                         </ul>
                     </div>
                     <div class="quality-add-to-cart">
@@ -109,9 +123,9 @@ if ($_GET) {
                     <div class="pro-dec-categories">
                         <ul>
                             <li class="categories-title">Categories:</li>
-                            <li><a href="#"><?= $product->categories_name_en; ?>,</a></li>
-                            <li><a href="shop.php?sub=<?= $product->subcategory_id; ?>"><?= $product->subcategories_name_en; ?>, </a></li>
-                            <li><a href=""><?= $product->brands_name_en; ?></a></li>
+                            <li><a href="shop.php?cate=<?= $product->category_id; ?>"><?= $product->categories_name_en; ?>,</a></li>
+                            <li><a href="shop.php?id=<?= $product->subcategory_id; ?>"><?= $product->subcategories_name_en; ?>, </a></li>
+                            <li><a href="shop.php?brand=<?= $product->brand_id; ?>"><?= $product->brands_name_en; ?></a></li>
                         </ul>
                     </div>
 
