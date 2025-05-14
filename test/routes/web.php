@@ -1,8 +1,8 @@
 <?php
 
-use App\Http\Controllers\Auth\CartController;
-use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\Auth\ProfileController;
+use App\Http\Controllers\backend\ProductController;
+use App\Http\Controllers\backend\UserController;
+use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,19 +16,21 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
 
-// closure ex
-// Route::get('profile',function(){
-// echo "hello profile";
-// });
+Route::group(["prefix" => "dashboard"], function () {
 
-Route::group(['prefix' => 'Dasboard'], function () {
-    Route::group(['prefix' => 'admins'], function () {
-        Route::get("profile", [ProfileController::class, "profile"])->name('profile');
-        Route::get("login", [LoginController::class, "login"])->name('login');
-        Route::get("cart", [CartController::class, "cart"]);
+    Route::get('/', [DashboardController::class, "index"]);
+    Route::group(['prefix' => 'products', "as" => "products."], function () {
+        Route::get('/', [ProductController::class,"index"])->name('index');
+        Route::get("/create/", [ProductController::class,"create"])->name('create');
+        Route::get("/edit/{id}", [ProductController::class,"edit"])->name('edit');
+        Route::post("/store/", [ProductController::class,"store"])->name('store');
+        Route::get("/destroy/{id}", [ProductController::class,"destroy"])->name('destroy');
+    });
+    Route::group(['prefix' => 'users', "as" => "users."], function () {
+        Route::get('/', [UserController::class,"index"])->name('index');
+        Route::get("/create/", [UserController::class,"create"])->name('create');
+        Route::get("/edit/{id}", [UserController::class,'edit'])->name('edit');
+        Route::get("/destroy/{id}", [UserController::class,'destroy'])->name('destroy');
     });
 });
