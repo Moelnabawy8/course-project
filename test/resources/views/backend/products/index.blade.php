@@ -33,13 +33,13 @@
                 <td>{{$product->code}}</td>
                 <td>{{$product->status}}</td>
                 <td>{{$product->created_at}}</td>
-                <td>{{$product->id}}</td>
+               
                 <td>
-                    <a href="{{ route('products.edit', 2) }}" class="btn btn-warning">Edit</a>
-                    <form action="{{ route('products.destroy', 1) }}" method="post" class="d-inline">
+                    <a href="{{ route('products.edit', $product->id) }}"  class="btn btn-warning">Edit</a>
+                    <form action="{{ route('products.destroy', $product->id) }}" value="edit" method="post" class="d-inline">
 
                         @csrf
-                        <button class=" btn btn-danger"> Delete </button>
+                        <button value="delete" class=" btn btn-danger"> Delete </button>
                     </form>
                 </td>
             </tr>
