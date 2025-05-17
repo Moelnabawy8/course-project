@@ -8,10 +8,17 @@
           method="post"
           enctype="multipart/form-data">
         @csrf
+        @method("put")
        
 
         {{-- ــــ الأسماء --}}
         <div class="form-row">
+            @if (session()->has("success"))
+            <div class="alert alert-success">{{session()->get("success")}}</div>
+            @elseif (session()->has("error"))
+            <div class="alert alert-danger">{{session()->get("error")}}</div>
+
+        @endif
             <div class="col-6">
                 <label for="name_en">Name En</label>
                 <input  type="text" name="name_en" id="name_en"

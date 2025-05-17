@@ -8,7 +8,16 @@
 @endsection
 
 @section('content')
-    <table id="example1" class="table table-bordered table-striped">
+<div class="row">
+    <div class="col-12">
+        @if (session()->has("success"))
+            <div class="alert alert-success">{{session()->get("success")}}</div>
+            @elseif (session()->has("error"))
+            <div class="alert alert-danger">{{session()->get("error")}}</div>
+
+        @endif
+        <div class="col-12">
+              <table id="example1" class="table table-bordered table-striped">
         <thead>
             <tr>
                 <th>Id</th>
@@ -55,6 +64,11 @@
 
 
     </table>
+        
+    </div>
+    </div>
+</div>
+  
 @endsection
 
 @section('js')

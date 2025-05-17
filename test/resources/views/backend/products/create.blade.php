@@ -4,6 +4,16 @@
 
 @section('content')
 <div class="col-12">
+     @if (session()->has("success"))
+    <div class="alert alert-success alert-dismissible fade show auto-close">
+        {{ session('success') }}
+    </div>
+@elseif (session()->has("error"))
+    <div class="alert alert-danger alert-dismissible fade show auto-close">
+        {{ session('error') }}
+    </div>
+@endif
+
     <form action="{{ route('products.store') }}" method="post" enctype="multipart/form-data">
         @csrf
 
