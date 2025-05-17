@@ -25,8 +25,8 @@ Route::group(["prefix" => "dashboard"], function () {
         Route::get("/create/", [ProductController::class,"create"])->name('create');
         Route::get("/edit/{id}", [ProductController::class,"edit"])->name('edit');
         Route::post("/store/", [ProductController::class,"store"])->name('store');
-        Route::post("/update/{id}", [ProductController::class,"update"])->name('update');
-        Route::post("/destroy/{id}", [ProductController::class,"destroy"])->name('destroy');
+        Route::put("/update/{id}", [ProductController::class,"update"])->name('update');
+        Route::delete("/destroy/{id}", [ProductController::class,"destroy"])->name('destroy');
     });
     Route::group(['prefix' => 'users', "as" => "users."], function () {
         Route::get('/', [UserController::class,"index"])->name('index');

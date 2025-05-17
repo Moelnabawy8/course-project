@@ -20,34 +20,39 @@
                 <th>Status</th>
                 <th>Created Date</th>
                 <th>Actions</th>
+                <th>Image</th>
+
             </tr>
         </thead>
         <tbody>
-            @foreach ($products as $product )
-            <tr>
-                <td>{{$product->id}}</td>
-                <td>{{$product->name_ar}}</td>
-                <td>{{$product->name_en}}</td>
-                <td>{{$product->price}}</td>
-                <td>{{$product->quantity}}</td>
-                <td>{{$product->code}}</td>
-                <td>{{$product->status}}</td>
-                <td>{{$product->created_at}}</td>
-               
-                <td>
-                    <a href="{{ route('products.edit', $product->id) }}"  class="btn btn-warning">Edit</a>
-                    <form action="{{ route('products.destroy', $product->id) }}" value="edit" method="post" class="d-inline">
+    @foreach ($products as $product)
+        <tr>
+            <td>{{ $product->id }}</td>
+            <td>{{ $product->name_en }}</td>
+            <td>{{ $product->name_ar }}</td>
+            <td>{{ $product->price }}</td>
+            <td>{{ $product->quantity }}</td>
+            <td>{{ $product->code }}</td>
+            <td>{{ $product->status }}</td>
+            <td>{{ $product->created_at }}</td>
+            <td>
+                <a href="{{ route('products.edit', $product->id) }}" class="btn btn-warning">Edit</a>
+                <form action="{{ route('products.destroy', $product->id) }}" method="post" class="d-inline">
+                    @csrf
+                    @method('DELETE')
+                    <button class="btn btn-danger">Delete</button>
+                </form>
+            </td>
+            <td>
+                <img src="{{ asset('dist/img/products/' . $product->image) }}"
+                     alt="{{ $product->name_en }}"
+                     width="70" height="70"
+                     class="img-thumbnail">
+            </td>
+        </tr>
+    @endforeach
+</tbody>
 
-                        @csrf
-                        <button value="delete" class=" btn btn-danger"> Delete </button>
-                    </form>
-                </td>
-            </tr>
-                
-            @endforeach
-            
-
-        </tbody>
 
     </table>
 @endsection
