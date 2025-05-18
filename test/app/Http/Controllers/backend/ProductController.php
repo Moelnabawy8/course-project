@@ -15,29 +15,39 @@ class ProductController extends Controller
 
     public function index()
     {
-        // جلب المنتجات من قاعدة البيانات
         $products = DB::table('products')
             ->select("id", "name_en", "name_ar", "price", "quantity", "code", "status", "created_at", "image")
             ->get();
 
-        // إرسال البيانات إلى الـ View
         return view('backend.products.index', compact('products'));
     }
 
-
     public function create()
     {
-        // جلب البراندات والتصنيفات الفرعية من قاعدة البيانات
         $brands = DB::table('brands')->get();
         $subcategories = DB::table('subcategories')
             ->select("id", "name_en")
             ->where("status", 1)
             ->get();
 
-        // إرسال البيانات إلى الـ View
         return view('backend.products.create', compact('brands', "subcategories"));
     }
 
+    public function store(StoreProductRequest $request)
+    {
+        $photo_name = $this->uploadPhoto($request->image, "products");
+
+        $data = $request->except("page", "_token", "image");
+        $data["image"] = $photo_name;
+
+        DB::table('products')->insert($data);
+
+        if ($request->page == "back") {
+            return redirect()->back()->with('success', 'تم حفظ المنتج بنجاح');
+        } else {
+            return redirect()->route("products.index")->with("success", "تم حفظ المنتج بنجاح");
+        }
+    }
 
     public function edit($id)
     {
@@ -51,76 +61,39 @@ class ProductController extends Controller
         return view('backend.products.edit', compact("product", "brands", "subcategories"));
     }
 
+    public function update(UpdateProductRequest $request, $id)
+    {
+        $data = $request->except("_token", "_method", "page", "image");
+
+        if ($request->has('image')) {
+            $oldName = DB::table('products')->where('id', $id)->value('image');
+            $this->deletePhoto(public_path("dist/img/products/{$oldName}"));
+
+            $data["image"] = $this->uploadPhoto($request->image, "products");
+        }
+
+        DB::table("products")->where("id", $id)->update($data);
+
+        if ($request->page == "back") {
+            return redirect()->back()->with("success", "تم تعديل المنتج بنجاح");
+        } else {
+            return redirect()->route("products.index")->with("success", "تم تعديل المنتج بنجاح");
+        }
+    }
 
     public function destroy($id)
     {
-        // نحاول نلاقي المنتج
         $product = DB::table('products')->where('id', $id)->first();
-        // نحذف الصورة من السيرفر (لو موجودة)
+
+        if (!$product) {
+            return redirect()->back()->with('error', 'المنتج غير موجود');
+        }
+
         $imagePath = public_path("dist/img/products/{$product->image}");
-        if (file_exists($imagePath)) {
-            unlink($imagePath);
-        }
-        // نحذف المنتج من قاعدة البيانات
+        $this->deletePhoto($imagePath);
+
         DB::table('products')->where('id', $id)->delete();
+
         return redirect()->route('products.index')->with("success", "تم حذف المنتج بنجاح");
-    }
-
-
-
-    public function store(StoreProductRequest $request)
-    {
-
-
-        
-        $photo_name =$this->uploadPhoto($request->image ,"products");
-
-
-        // تجهيز بيانات الإدخال بعد حذف الـ token واسم الصورة
-        $data = $request->except("page", "_token", "image");
-        $data["image"] = $photo_name;
-
-        // إدخال البيانات في جدول المنتجات
-        DB::table('products')->insert($data);
-
-        // التوجيه حسب الزر اللي ضغط عليه المستخدم
-        if ($request->page == "back") {
-            return redirect()->back(); // ارجع لنفس الصفحة
-        } else {
-            return redirect()->route("products.index")->with("success", "successfully stored"); // روح لصفحة عرض المنتجات
-        }
-    }
-
-
-
-    public function update(UpdateProductRequest $request, $id)
-    {
-        $data = $request->except(
-            "_token",
-            "method",
-            "page",
-            "image"
-        );
-        if ($request->has("image")) {
-            # code...
-            $old_photo_name = DB::table("products")->where("id", $id)->first()->image;
-            $path = public_path("/dist/img/products/" . $old_photo_name);
-            if (file_exists($path . $old_photo_name)) {
-                # code...
-                unlink($path . $old_photo_name);
-            }
-
-            // upload image
-            // تجهيز اسم مميز للصورة
-            $photo_name =$this->uploadPhoto($request->image ,"products");
-            
-            $data["image"] = $photo_name;
-        }
-        DB::table("products")->where("id", $id)->update($data);
-        if ($request->page == "back") {
-            return redirect()->back(); // ارجع لنفس الصفحة
-        } else {
-            return redirect()->route("products.index")->with("success", "تم تعديل المنتج بنجاح"); // روح لصفحة عرض المنتجات
-        }
     }
 }
