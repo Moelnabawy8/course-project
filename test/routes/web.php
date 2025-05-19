@@ -1,9 +1,11 @@
 <?php
 
-use App\Http\Controllers\backend\ProductController;
-use App\Http\Controllers\backend\UserController;
-use App\Http\Controllers\DashboardController;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\backend\UserController;
+use App\Http\Controllers\backend\ProductController;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,7 +19,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 
-Route::group(["prefix" => "dashboard"], function () {
+Route::group(["prefix" => "dashboard","middleware"=>"verified"], function () {
 
     Route::get('/', [DashboardController::class, "index"]);
     Route::group(['prefix' => 'products', "as" => "products."], function () {
@@ -36,7 +38,7 @@ Route::group(["prefix" => "dashboard"], function () {
     });
 });
 
-Auth::routes();
+Auth::routes(["verify"=>true]);
 Route::get('/', function () {
     return view('welcome');
 });
