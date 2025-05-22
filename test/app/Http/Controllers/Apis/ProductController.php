@@ -10,10 +10,11 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
+use App\Http\traits\ApiTrait;
 
 class ProductController extends Controller
 {
-    use Media;                      // دمج الدوال uploadPhoto / deletePhoto
+    use Media,ApiTrait;                      // دمج الدوال uploadPhoto / deletePhoto
 
     /*--------------------------------------------------
     | GET /api/products        –  إرجاع كل المنتجات
@@ -21,7 +22,7 @@ class ProductController extends Controller
     public function index()
     {
         $products = Product::all();                 // جلب كل المنتجات
-        return response()->json(compact('products'));// تحويلها إلى JSON
+        return $this->Data(compact("products"),"all products",200);// تحويلها إلى JSON
     }
 
     /*--------------------------------------------------
@@ -33,7 +34,7 @@ class ProductController extends Controller
         $brands        = Brand::all();
         $subcategories = Subcategory::select('id', 'name_en')->get();
 
-        return response()->json(compact('brands', 'subcategories'));
+        return $this->Data(compact("brands","subcategories"),"create Product",200);
     }
 
     /*--------------------------------------------------
@@ -45,7 +46,7 @@ class ProductController extends Controller
         $subcategories = Subcategory::select('id', 'name_en')->get();
         $product       = Product::find($id); // المنتج المطلوب
 
-        return response()->json(compact('product', 'brands', 'subcategories'));
+        return $this->Data(compact("brands","subcategories","product"),"Edit Product",200);
     }
 
     /*--------------------------------------------------
@@ -63,10 +64,7 @@ class ProductController extends Controller
         // 3) إنشاء المنتج
         Product::create($data);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Product created successfully'
-        ], 201);
+        return $this->SuccessMessage("product created successfully",201);
     }
 
     /*--------------------------------------------------
@@ -82,7 +80,7 @@ class ProductController extends Controller
                 'message' => 'Product not found'
             ], 404);
 
-        $data = $request->except('image');         // كل الحقول عدا الصورة
+        $data = $request->except('image',"_method");         // كل الحقول عدا الصورة
 
         // لو المستخدم أرسل صورة جديدة
         if ($request->hasFile('image')) {
@@ -95,10 +93,7 @@ class ProductController extends Controller
 
         $product->update($data);                   // تحديث القيم في DB
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Product updated successfully'
-        ]);
+        return $this->SuccessMessage("product updated successfully",200);
     }
 
     /*--------------------------------------------------
@@ -108,7 +103,7 @@ class ProductController extends Controller
     {
         $product = Product::find($id);             // المنتج
         if (!$product)
-            return response()->json(['message'=>'Not found'],404);
+            return $this->ErrorMessage([],"product not found",422);
 
         // حذف صورة المنتج من الـ disk
         $this->deletePhoto(public_path("dist/img/products/{$product->image}"));
@@ -116,9 +111,6 @@ class ProductController extends Controller
         // حذف السجل من قاعدة البيانات
         $product->delete();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Product deleted successfully'
-        ], 204);
+        return $this->SuccessMessage("Product deleted Successfully",200);
     }
 }
