@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Apis\Auth\RegisterController;
 use App\Http\Controllers\Apis\ProductController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -25,5 +26,9 @@ Route::get("/edit/{id}/",[ProductController::class,"edit"]);
 Route::post("/store/",[ProductController::class,"store"]);
 Route::put("/update/{id}",[ProductController::class,"update"]);
 Route::delete("/destroy/{id}",[ProductController::class,"destroy"]);
+
+});
+Route::group(["prefix"=>"users"],function(){
+   Route::post("register",RegisterController::class);
 
 });
