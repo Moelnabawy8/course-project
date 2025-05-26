@@ -1,9 +1,11 @@
 <?php
 
+use App\Http\Controllers\Apis\Auth\EmailVerficationController;
 use App\Http\Controllers\Apis\Auth\RegisterController;
 use App\Http\Controllers\Apis\ProductController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use PharIo\Manifest\Email;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,5 +32,7 @@ Route::delete("/destroy/{id}",[ProductController::class,"destroy"]);
 });
 Route::group(["prefix"=>"users"],function(){
    Route::post("register",RegisterController::class);
+   Route::post("send-code",[EmailVerficationController::class,"sendcode"]);
+   Route::post("check-code",[EmailVerficationController::class,"checkcode"]);
 
 });
