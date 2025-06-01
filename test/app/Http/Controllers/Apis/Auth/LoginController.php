@@ -7,12 +7,8 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\traits\ApiTrait;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\ResetPassword;
 use Illuminate\Support\Facades\Hash;
-use App\Http\Requests\ForgetPassword;
-use Illuminate\Support\Facades\Password;
-use Illuminate\Auth\Events\PasswordReset;
-use Illuminate\Support\Str;
+
 
 class LoginController extends Controller
 {

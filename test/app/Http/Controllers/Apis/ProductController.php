@@ -4,13 +4,14 @@ namespace App\Http\Controllers\Apis;
 
 use App\Models\Brand;
 use App\Models\Product;
-use App\Http\traits\Media;          // Trait لرفع / حذف الصور
 use App\Models\Subcategory;
 use Illuminate\Http\Request;
+use App\Http\traits\ApiTrait;
+use Illuminate\Support\Facades\App;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
-use App\Http\traits\ApiTrait;
+use App\Http\traits\Media;          // Trait لرفع / حذف الصور
 
 class ProductController extends Controller
 {
@@ -21,8 +22,9 @@ class ProductController extends Controller
     --------------------------------------------------*/
     public function index()
     {
-        $products = Product::all();                 // جلب كل المنتجات
-        return $this->Data(compact("products"),"all products",200);// تحويلها إلى JSON
+        $language=App::getLocale(); // جلب اللغة الحالية
+        $products = Product::select("id","name_".$language ,"desc_".$language)->get();                 // جلب كل المنتجات
+        return $this->Data(compact("products"), __("messages.all"),200);// تحويلها إلى JSON
     }
 
     /*--------------------------------------------------

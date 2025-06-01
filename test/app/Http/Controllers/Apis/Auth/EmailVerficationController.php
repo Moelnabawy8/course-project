@@ -3,21 +3,23 @@
 namespace App\Http\Controllers\Apis\Auth;
 
 // استدعاء الكنترولر الأساسي
-use App\Http\Controllers\Controller;
-
-// Request فيه قواعد التحقق من الكود
-use App\Http\Requests\CheckCodeRequest;
-
-// Trait فيه دوال خاصة بالـ API زي Data()
-use App\Http\traits\ApiTrait;
-
-// موديل المستخدم
-use App\Models\User;
-
-// لتسهيل الوصول للمستخدم المصادق عليه
 use Auth;
 
+// Request فيه قواعد التحقق من الكود
+use App\Models\User;
+
+// Trait فيه دوال خاصة بالـ API زي Data()
 use Illuminate\Http\Request;
+
+// موديل المستخدم
+use App\Http\traits\ApiTrait;
+
+// لتسهيل الوصول للمستخدم المصادق عليه
+use App\Mail\EmailVerification;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Mail;
+use App\Http\Requests\CheckCodeRequest;
 
 class EmailVerficationController extends Controller
 {
@@ -49,6 +51,8 @@ class EmailVerficationController extends Controller
 
         // إضافة التوكن للعرض فقط في الريسبونس (مش هيتخزن في الـ DB)
         $user->token = $token;
+        // إرسال الكود للمستخدم عبر البريد الإلكتروني
+         Mail::to($user->email)->send(new EmailVerification($user));
 
         // إرسال بيانات المستخدم في الريسبونس
         return $this->Data(compact("user"));
@@ -66,8 +70,8 @@ class EmailVerficationController extends Controller
         // جلب المستخدم من قاعدة البيانات
         $user = User::find($authenticationUser->id);
 
-        // إضافة التوكن للعرض فقط
-        $user->token = $token;
+        
+        
 
         // التحقق إذا الكود صحيح ولم ينتهِ بعد
         if ($user->code == $request->code && $user->code_expired_at > now()) {
